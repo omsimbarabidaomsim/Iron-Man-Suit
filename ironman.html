@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MARK L — IRON MAN</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+
+  :root {
+    --gold: #c8a951;
+    --red: #c0392b;
+    --red-bright: #e74c3c;
+    --dark-red: #8b1a1a;
+    --arc: #5ddef4;
+    --arc-glow: #00c8ff;
+    --bg: #0a0a0f;
+    --panel: #1a1a2e;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Orbitron', sans-serif;
+    overflow: hidden;
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background: 
+      radial-gradient(ellipse at 50% 50%, rgba(0,200,255,0.04) 0%, transparent 70%),
+      repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255,255,255,0.01) 40px, rgba(255,255,255,0.01) 41px),
+      repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(255,255,255,0.01) 40px, rgba(255,255,255,0.01) 41px);
+    pointer-events: none;
+  }
+
+  .hud-title {
+    font-size: 11px;
+    letter-spacing: 8px;
+    color: var(--arc);
+    opacity: 0.7;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    font-family: 'Share Tech Mono', monospace;
+    animation: flicker 4s infinite;
+  }
+
+  @keyframes flicker {
+    0%,96%,100% { opacity: 0.7; }
+    97% { opacity: 0.2; }
+    98% { opacity: 0.8; }
+    99% { opacity: 0.3; }
+  }
+
+  .suit-container {
+    position: relative;
+    width: 320px;
+    animation: float 4s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+
+  svg {
+    width: 100%;
+    filter: drop-shadow(0 0 20px rgba(192,57,43,0.4)) drop-shadow(0 0 60px rgba(0,200,255,0.15));
+  }
+
+  /* Arc reactor pulse */
+  .arc-core {
+    animation: arc-pulse 2s ease-in-out infinite;
+    transform-origin: center;
+  }
+  @keyframes arc-pulse {
+    0%,100% { opacity: 1; filter: brightness(1); }
+    50% { opacity: 0.6; filter: brightness(1.8); }
+  }
+
+  .arc-ring {
+    animation: arc-spin 3s linear infinite;
+    transform-origin: 160px 220px;
+  }
+  @keyframes arc-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .eye-left, .eye-right {
+    animation: eye-glow 2s ease-in-out infinite;
+  }
+  @keyframes eye-glow {
+    0%,100% { opacity: 0.9; }
+    50% { opacity: 0.3; }
+  }
+
+  .repulsor-left, .repulsor-right {
+    animation: repulsor-pulse 1.5s ease-in-out infinite alternate;
+  }
+  @keyframes repulsor-pulse {
+    from { opacity: 0.5; r: 8; }
+    to { opacity: 1; r: 10; filter: brightness(2); }
+  }
+
+  .hud-stats {
+    margin-top: 28px;
+    display: flex;
+    gap: 32px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    color: var(--arc);
+    opacity: 0.6;
+    letter-spacing: 2px;
+  }
+
+  .stat { text-align: center; }
+  .stat-val {
+    display: block;
+    font-size: 18px;
+    font-family: 'Orbitron', sans-serif;
+    color: var(--gold);
+    opacity: 1;
+    margin-bottom: 2px;
+    animation: count 3s ease-out forwards;
+  }
+
+  .hud-bar {
+    width: 200px;
+    height: 2px;
+    background: rgba(93,222,244,0.15);
+    margin: 20px auto 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .hud-bar::after {
+    content: '';
+    position: absolute;
+    left: -100%;
+    top: 0;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, var(--arc), transparent);
+    animation: scan 2s linear infinite;
+  }
+  @keyframes scan {
+    from { left: -60%; }
+    to { left: 110%; }
+  }
+
+  .power-ring {
+    position: absolute;
+    border: 1px solid rgba(93,222,244,0.2);
+    border-radius: 50%;
+    animation: expand 3s ease-out infinite;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+  }
+  @keyframes expand {
+    0% { width: 80px; height: 80px; opacity: 0.6; }
+    100% { width: 340px; height: 340px; opacity: 0; }
+  }
+  .power-ring:nth-child(2) { animation-delay: 1s; }
+  .power-ring:nth-child(3) { animation-delay: 2s; }
+
+  .corner-dec {
+    position: fixed;
+    width: 60px; height: 60px;
+    border-color: rgba(93,222,244,0.25);
+    border-style: solid;
+    border-width: 0;
+  }
+  .corner-dec.tl { top: 20px; left: 20px; border-top-width: 1px; border-left-width: 1px; }
+  .corner-dec.tr { top: 20px; right: 20px; border-top-width: 1px; border-right-width: 1px; }
+  .corner-dec.bl { bottom: 20px; left: 20px; border-bottom-width: 1px; border-left-width: 1px; }
+  .corner-dec.br { bottom: 20px; right: 20px; border-bottom-width: 1px; border-right-width: 1px; }
+</style>
+</head>
+<body>
+
+<div class="corner-dec tl"></div>
+<div class="corner-dec tr"></div>
+<div class="corner-dec bl"></div>
+<div class="corner-dec br"></div>
+
+<div class="hud-title">STARK INDUSTRIES — MARK L — ONLINE</div>
+
+<div class="suit-container">
+  <div class="power-ring"></div>
+  <div class="power-ring"></div>
+  <div class="power-ring"></div>
+
+  <svg viewBox="0 0 320 520" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="arcGrad" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#ffffff"/>
+        <stop offset="30%" stop-color="#5ddef4"/>
+        <stop offset="100%" stop-color="#0066ff" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="eyeGrad" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#ffffff"/>
+        <stop offset="50%" stop-color="#5ddef4"/>
+        <stop offset="100%" stop-color="#003366"/>
+      </radialGradient>
+      <linearGradient id="redGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#d44000"/>
+        <stop offset="50%" stop-color="#c0392b"/>
+        <stop offset="100%" stop-color="#7b1c1c"/>
+      </linearGradient>
+      <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#e8c060"/>
+        <stop offset="50%" stop-color="#c8a951"/>
+        <stop offset="100%" stop-color="#8b6914"/>
+      </linearGradient>
+      <linearGradient id="darkRedGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="#9b2020"/>
+        <stop offset="100%" stop-color="#5a0f0f"/>
+      </linearGradient>
+      <filter id="glow">
+        <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+        <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <filter id="strongGlow">
+        <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
+        <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+
+    <!-- ═══ NECK ═══ -->
+    <rect x="130" y="148" width="60" height="22" rx="4" fill="url(#goldGrad)"/>
+    <rect x="138" y="152" width="44" height="14" rx="2" fill="#8b6914" opacity="0.6"/>
+
+    <!-- ═══ HEAD / HELMET ═══ -->
+    <!-- Helmet base -->
+    <path d="M90,130 Q90,60 160,55 Q230,60 230,130 L228,148 Q200,160 160,162 Q120,160 92,148 Z" fill="url(#redGrad)"/>
+    <!-- Faceplate lower -->
+    <path d="M110,118 L210,118 L210,148 Q185,158 160,160 Q135,158 110,148 Z" fill="#b03020"/>
+    <!-- Helmet highlight top -->
+    <path d="M120,70 Q160,58 200,70 Q185,62 160,60 Q135,62 120,70Z" fill="rgba(255,180,120,0.25)"/>
+    <!-- Center forehead ridge -->
+    <path d="M155,58 L165,58 L162,120 L158,120 Z" fill="rgba(0,0,0,0.3)"/>
+    <!-- Side panel lines -->
+    <path d="M100,90 L95,140" stroke="#7b1c1c" stroke-width="1.5" fill="none"/>
+    <path d="M220,90 L225,140" stroke="#7b1c1c" stroke-width="1.5" fill="none"/>
+
+    <!-- Cheek plates -->
+    <path d="M92,110 Q92,130 100,145 L110,118 L105,105 Z" fill="url(#darkRedGrad)"/>
+    <path d="M228,110 Q228,130 220,145 L210,118 L215,105 Z" fill="url(#darkRedGrad)"/>
+
+    <!-- ═══ EYES ═══ -->
+    <!-- Left eye -->
+    <path class="eye-left" d="M110,107 L138,100 L142,112 L115,118 Z" fill="url(#eyeGrad)" filter="url(#strongGlow)"/>
+    <path d="M113,109 L136,103 L139,110 L117,115 Z" fill="rgba(255,255,255,0.2)"/>
+    <!-- Right eye -->
+    <path class="eye-right" d="M210,107 L182,100 L178,112 L205,118 Z" fill="url(#eyeGrad)" filter="url(#strongGlow)"/>
+    <path d="M207,109 L184,103 L181,110 L203,115 Z" fill="rgba(255,255,255,0.2)"/>
+
+    <!-- Nose ridge -->
+    <path d="M156,118 L164,118 L162,138 L158,138 Z" fill="#8b1c1c"/>
+    <!-- Mouth slit -->
+    <path d="M130,140 L190,140 L188,146 L132,146 Z" fill="#5a0808"/>
+    <line x1="145" y1="140" x2="145" y2="146" stroke="#8b1c1c" stroke-width="1"/>
+    <line x1="160" y1="140" x2="160" y2="146" stroke="#8b1c1c" stroke-width="1"/>
+    <line x1="175" y1="140" x2="175" y2="146" stroke="#8b1c1c" stroke-width="1"/>
+
+    <!-- ═══ CHEST / TORSO ═══ -->
+    <!-- Main chest -->
+    <path d="M75,165 L245,165 L255,290 L65,290 Z" fill="url(#redGrad)"/>
+    <!-- Chest center dark panel -->
+    <path d="M130,165 L190,165 L195,210 L125,210 Z" fill="#8b1c1c"/>
+    <!-- Abs lower -->
+    <path d="M65,290 L255,290 L250,360 L70,360 Z" fill="url(#redGrad)"/>
+
+    <!-- Chest panel lines -->
+    <line x1="130" y1="165" x2="120" y2="290" stroke="#7b1c1c" stroke-width="2"/>
+    <line x1="190" y1="165" x2="200" y2="290" stroke="#7b1c1c" stroke-width="2"/>
+    <line x1="75" y1="220" x2="245" y2="220" stroke="#7b1c1c" stroke-width="1.5"/>
+    <line x1="70" y1="255" x2="250" y2="255" stroke="#7b1c1c" stroke-width="1.5"/>
+
+    <!-- Pec plates -->
+    <path d="M75,165 L130,165 L120,220 L75,215 Z" fill="#c0392b"/>
+    <path d="M245,165 L190,165 L200,220 L245,215 Z" fill="#c0392b"/>
+
+    <!-- Gold trim on chest -->
+    <path d="M75,165 L85,165 L80,220 L70,215 Z" fill="url(#goldGrad)"/>
+    <path d="M245,165 L235,165 L240,220 L250,215 Z" fill="url(#goldGrad)"/>
+
+    <!-- ═══ ARC REACTOR ═══ -->
+    <!-- Outer housing -->
+    <circle cx="160" cy="220" r="32" fill="#1a0505" stroke="#c8a951" stroke-width="2"/>
+    <!-- Inner rings -->
+    <circle cx="160" cy="220" r="26" fill="none" stroke="#5ddef4" stroke-width="1" opacity="0.5"/>
+    <circle cx="160" cy="220" r="20" fill="none" stroke="#5ddef4" stroke-width="1.5" opacity="0.7"/>
+    <!-- Spinning ring -->
+    <g class="arc-ring">
+      <circle cx="160" cy="220" r="16" fill="none" stroke="#5ddef4" stroke-width="1.5" stroke-dasharray="8 4"/>
+    </g>
+    <!-- Core glow -->
+    <circle class="arc-core" cx="160" cy="220" r="12" fill="url(#arcGrad)" filter="url(#strongGlow)"/>
+    <circle cx="160" cy="220" r="6" fill="white" opacity="0.9" filter="url(#glow)"/>
+    <!-- Triangular housing bolts -->
+    <circle cx="160" cy="194" r="3" fill="#c8a951"/>
+    <circle cx="180" cy="234" r="3" fill="#c8a951"/>
+    <circle cx="140" cy="234" r="3" fill="#c8a951"/>
+
+    <!-- ═══ SHOULDERS ═══ -->
+    <!-- Left shoulder -->
+    <path d="M75,165 L40,180 L30,230 L60,240 L75,215 Z" fill="url(#redGrad)"/>
+    <path d="M40,180 L30,180 L20,228 L30,230 Z" fill="url(#goldGrad)"/>
+    <!-- Right shoulder -->
+    <path d="M245,165 L280,180 L290,230 L260,240 L245,215 Z" fill="url(#redGrad)"/>
+    <path d="M280,180 L290,180 L300,228 L290,230 Z" fill="url(#goldGrad)"/>
+
+    <!-- ═══ UPPER ARMS ═══ -->
+    <!-- Left arm -->
+    <path d="M30,230 L60,240 L55,330 L20,318 Z" fill="url(#goldGrad)"/>
+    <path d="M20,318 L55,330 L52,360 L18,348 Z" fill="url(#goldGrad)"/>
+    <!-- Right arm -->
+    <path d="M290,230 L260,240 L265,330 L300,318 Z" fill="url(#goldGrad)"/>
+    <path d="M300,318 L265,330 L268,360 L302,348 Z" fill="url(#goldGrad)"/>
+
+    <!-- Arm panels -->
+    <path d="M32,240 L58,246 L54,320 L28,314 Z" fill="url(#redGrad)" opacity="0.7"/>
+    <path d="M288,240 L262,246 L266,320 L292,314 Z" fill="url(#redGrad)" opacity="0.7"/>
+
+    <!-- ═══ FOREARMS / GAUNTLETS ═══ -->
+    <!-- Left gauntlet -->
+    <path d="M18,348 L52,360 L48,400 L14,388 Z" fill="url(#redGrad)"/>
+    <path d="M14,388 L48,400 L46,420 L12,410 Z" fill="url(#goldGrad)"/>
+    <!-- Right gauntlet -->
+    <path d="M302,348 L268,360 L272,400 L306,388 Z" fill="url(#redGrad)"/>
+    <path d="M306,388 L272,400 L274,420 L308,410 Z" fill="url(#goldGrad)"/>
+
+    <!-- Repulsor left -->
+    <circle class="repulsor-left" cx="30" cy="432" r="10" fill="url(#arcGrad)" filter="url(#strongGlow)"/>
+    <circle cx="30" cy="432" r="5" fill="white" opacity="0.9"/>
+    <!-- Repulsor right -->
+    <circle class="repulsor-right" cx="290" cy="432" r="10" fill="url(#arcGrad)" filter="url(#strongGlow)"/>
+    <circle cx="290" cy="432" r="5" fill="white" opacity="0.9"/>
+
+    <!-- Fingers left -->
+    <path d="M10,418 L22,422 L20,445 L8,441 Z" fill="url(#goldGrad)"/>
+    <path d="M22,420 L34,422 L33,445 L21,443 Z" fill="url(#goldGrad)"/>
+    <path d="M34,420 L44,422 L44,445 L33,443 Z" fill="url(#goldGrad)"/>
+    <path d="M44,420 L52,422 L52,440 L43,438 Z" fill="url(#goldGrad)"/>
+    <!-- Fingers right -->
+    <path d="M310,418 L298,422 L300,445 L312,441 Z" fill="url(#goldGrad)"/>
+    <path d="M298,420 L286,422 L287,445 L299,443 Z" fill="url(#goldGrad)"/>
+    <path d="M286,420 L276,422 L276,445 L287,443 Z" fill="url(#goldGrad)"/>
+    <path d="M276,420 L268,422 L268,440 L277,438 Z" fill="url(#goldGrad)"/>
+
+    <!-- ═══ WAIST / HIP ═══ -->
+    <path d="M70,360 L250,360 L248,390 L72,390 Z" fill="url(#goldGrad)"/>
+    <!-- Hip panels -->
+    <path d="M72,390 L120,390 L118,420 L70,420 Z" fill="url(#redGrad)"/>
+    <path d="M200,390 L248,390 L250,420 L202,420 Z" fill="url(#redGrad)"/>
+    <path d="M120,390 L200,390 L198,420 L122,420 Z" fill="#8b1c1c"/>
+    <!-- Waist trim lines -->
+    <line x1="90" y1="360" x2="88" y2="390" stroke="#7b1c1c" stroke-width="1.5"/>
+    <line x1="120" y1="360" x2="120" y2="390" stroke="#c8a951" stroke-width="1.5"/>
+    <line x1="200" y1="360" x2="200" y2="390" stroke="#c8a951" stroke-width="1.5"/>
+    <line x1="230" y1="360" x2="232" y2="390" stroke="#7b1c1c" stroke-width="1.5"/>
+
+    <!-- ═══ LEGS / THIGHS ═══ -->
+    <!-- Left thigh -->
+    <path d="M70,420 L120,420 L116,490 L66,490 Z" fill="url(#redGrad)"/>
+    <path d="M70,420 L80,420 L76,490 L66,490 Z" fill="url(#goldGrad)"/>
+    <!-- Right thigh -->
+    <path d="M200,420 L250,420 L254,490 L204,490 Z" fill="url(#redGrad)"/>
+    <path d="M240,420 L250,420 L254,490 L244,490 Z" fill="url(#goldGrad)"/>
+
+    <!-- Thigh lines -->
+    <line x1="95" y1="422" x2="93" y2="488" stroke="#7b1c1c" stroke-width="1.5"/>
+    <line x1="80" y1="450" x2="118" y2="450" stroke="#7b1c1c" stroke-width="1"/>
+    <line x1="225" y1="422" x2="227" y2="488" stroke="#7b1c1c" stroke-width="1.5"/>
+    <line x1="202" y1="450" x2="240" y2="450" stroke="#7b1c1c" stroke-width="1"/>
+
+    <!-- ═══ BOOTS / FEET ═══ -->
+    <!-- Left boot -->
+    <path d="M66,490 L116,490 L118,520 L64,520 Z" fill="url(#goldGrad)"/>
+    <path d="M64,510 L118,510 L120,530 L62,530 Z" fill="url(#redGrad)"/>
+    <path d="M60,528 L120,530 L118,540 L58,538 Z" fill="url(#goldGrad)"/>
+    <!-- Right boot -->
+    <path d="M204,490 L254,490 L256,520 L206,520 Z" fill="url(#goldGrad)"/>
+    <path d="M202,510 L256,510 L258,530 L200,530 Z" fill="url(#redGrad)"/>
+    <path d="M200,528 L260,530 L262,540 L198,538 Z" fill="url(#goldGrad)"/>
+
+    <!-- Boot thrusters glow -->
+    <ellipse cx="91" cy="540" rx="28" ry="5" fill="#ff6600" opacity="0.4" filter="url(#glow)"/>
+    <ellipse cx="229" cy="540" rx="28" ry="5" fill="#ff6600" opacity="0.4" filter="url(#glow)"/>
+
+    <!-- Knee joint indicators -->
+    <circle cx="93" cy="490" r="8" fill="#c8a951" stroke="#8b6914" stroke-width="1.5"/>
+    <circle cx="227" cy="490" r="8" fill="#c8a951" stroke="#8b6914" stroke-width="1.5"/>
+  </svg>
+</div>
+
+<div class="hud-bar"></div>
+
+<div class="hud-stats">
+  <div class="stat"><span class="stat-val">100%</span>POWER</div>
+  <div class="stat"><span class="stat-val">MKXLV</span>SUIT</div>
+  <div class="stat"><span class="stat-val">3000</span>ALTITUDE</div>
+</div>
+
+</body>
+</html>
